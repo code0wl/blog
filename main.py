@@ -19,8 +19,9 @@ import webapp2
 import jinja2
 from os import path
 
-template_dir = path.join(path.dirname(__file__), 'partials')
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
+template_dir = path.join(path.dirname(__file__), 'templates')
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
+
 
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
@@ -33,9 +34,12 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+
 class MainPage(Handler):
     def get(self):
-        self.render("shopping_list.html", poop=self.request.get("name"))
+        items = self.request.get_all("food")
+        self.render("shopping_list.html", items=items)
+
 
 app = webapp2.WSGIApplication([
     ('/', MainPage)
