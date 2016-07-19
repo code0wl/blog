@@ -12,13 +12,4 @@
     <br/>
     <button type="submit">Add</button>
 </form>
-
-<h4>Food list</h4>
-<ul>
-    {% if items %}
-    {% for item in items %}
-    <li>{{item}}</li>
-    {% endfor %}
-    {% endif %}
-</ul>
 {% endblock %}

@@ -38,9 +38,15 @@ class Handler(webapp2.RequestHandler):
 class MainPage(Handler):
     def get(self):
         items = self.request.get_all("food")
-        self.render("shopping_list.html", items=items)
+        self.render("home.html", items=items)
+
+
+class NewPost(Handler):
+    def get(self):
+        self.render("new_post.html")
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage)
+    ('/', MainPage),
+    ('/newpost', NewPost)
 ], debug=True)
