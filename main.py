@@ -1,4 +1,4 @@
-import os
+from os import path
 import re
 import random
 import hashlib
@@ -10,7 +10,7 @@ import jinja2
 
 from google.appengine.ext import db
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+template_dir = path.join(path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
@@ -63,16 +63,6 @@ class BlogHandler(webapp2.RequestHandler):
         webapp2.RequestHandler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         self.user = uid and User.by_id(int(uid))
-
-
-def render_post(response, post):
-    response.out.write('<b>' + post.subject + '</b><br>')
-    response.out.write(post.content)
-
-
-class MainPage(BlogHandler):
-    def get(self):
-        self.write('Hello, Udacity!')
 
 
 def make_salt(length=5):
@@ -141,7 +131,7 @@ class Post(db.Model):
 
 class BlogFront(BlogHandler):
     def get(self):
-        posts = greetings = Post.all().order('-created')
+        posts = Post.all().order('-created')
         self.render('front.html', posts=posts)
 
 
@@ -176,7 +166,7 @@ class NewPost(BlogHandler):
             p.put()
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
-            error = "subject and content, please!"
+            error = "Please add a valid subject or content!"
             self.render("newpost.html", subject=subject, content=content, error=error)
 
 
@@ -241,7 +231,6 @@ class Signup(BlogHandler):
 
 class Register(Signup):
     def done(self):
-        # make sure the user doesn't already exist
         u = User.by_name(self.username)
         if u:
             msg = 'That user already exists.'
@@ -285,16 +274,7 @@ class Unit3Welcome(BlogHandler):
             self.redirect('/signup')
 
 
-class Welcome(BlogHandler):
-    def get(self):
-        username = self.request.get('username')
-        if valid_username(username):
-            self.render('welcome.html', username=username)
-        else:
-            self.redirect('/unit2/signup')
-
-
-app = webapp2.WSGIApplication([('/', MainPage),
+app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),

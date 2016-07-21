@@ -1,4 +1,69 @@
 body {
+    margin: 0;
     background: #f0f0f0;
     color: #333;
+    font-size: 16px;
+    font-family: "Lucinda Grande", "Lucinda Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
+}
+
+.main-nav {
+    overflow: auto;
+    background: #1a90bc;
+    padding: 1rem;
+}
+
+.login a {
+    margin: 0 1rem;
+}
+
+.main-nav > div {
+    text-align: left;
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+    padding: 0;
+    color:  white;
+    margin: 0;
+}
+
+@media screen and (min-width: 768px) {
+    .main-nav > div {
+        text-align: right;
+        box-sizing: border-box;
+    }
+}
+
+.post {
+    padding: 1rem;
+    margin: 3rem 0;
+}
+
+.post .post-title {
+    font-size: 2rem;
+    text-transform: capitalize;
+    margin: 1rem 0;
+    font-weight: 100;
+}
+
+.post .post-date {
+    font-weight: 100;
+    color: #999
+}
+
+.post .post-content {
+    padding: 1rem 0;
+    font-weight:200;
+}
+
+.main-nav a {
+    color: white;
+    text-decoration: none;
+}
+
+.main-nav a:hover {
+    text-decoration: underline;
+}
+
+#content {
+    padding: 1rem;
 }

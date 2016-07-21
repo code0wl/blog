@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {{post.render() | safe}}
+{% if user %}
+<ul class="controls">
+    <li>
+        edit post
+    </li>
+
+    <li>
+        remove post
+    </li>
+</ul>
+{% endif %}
+{{post.render() | safe}}
 {% endblock %}
