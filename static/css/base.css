@@ -12,8 +12,25 @@ body {
     padding: 1rem;
 }
 
+table {
+    width: 100%;
+}
+
 .login a {
     margin: 0 1rem;
+}
+
+td {
+    width: 100%;
+}
+
+tr,
+label {
+    width: 100%;
+}
+
+input {
+    width: 100%;
 }
 
 .main-nav > div {
@@ -38,11 +55,18 @@ body {
     margin: 3rem 0;
 }
 
-.post .post-title {
+.post .post-title a {
     font-size: 2rem;
     text-transform: capitalize;
     margin: 1rem 0;
+    display: block;
     font-weight: 100;
+    text-decoration: none;
+    color: #333;
+}
+
+.post .post-title a:hover {
+    text-decoration: underline;
 }
 
 .post .post-date {
