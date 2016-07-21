@@ -49,7 +49,10 @@ input {
         box-sizing: border-box;
     }
 }
-
+a{
+    display: block;
+    background: blue
+}
 .post {
     padding: 1rem;
     margin: 3rem 0;
