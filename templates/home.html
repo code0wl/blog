@@ -2,11 +2,9 @@
 
 {% block content %}
 
-  {% for p in posts %}
-    {{ p.render() | safe }}
-    <br><br>
-  {% endfor %}
-
-<a href="/blog/newpost"> Create a new post </a>
+{% for p in posts %}
+{{ p.render() | safe }}
+<br><br>
+{% endfor %}
 
 {% endblock %}

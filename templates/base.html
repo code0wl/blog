@@ -1,20 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/styles/css/base.css" />
-
-  <title>CS 253 Blog</title>
+    <link type="text/css" rel="stylesheet" href="/styles/css/base.css"/>
+    <title>Multi user blog</title>
 </head>
 
 <body>
-  <a href="/blog" class="main-title">
-    CS 253 Blog
-  </a>
+<nav>
+    <ul>
+        <li>
+            <a href="/" class="main-title">
+                Home
+            </a>
+        </li>
+        <li>
+            <a href="/blog/newpost" class="main-title">
+                Sign in
+            </a>
+        </li>
+        <li>
+            <a href="/blog/newpost" class="main-title">
+                Make a post
+            </a>
+        </li>
+        <li>
+            <a href="/blog" class="main-title">
+                Head to the blog
+            </a>
+        </li>
+    </ul>
+</nav>
 
-  <div id="content">
-  {% block content %}
-  {% endblock %}
-  </div>
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
 
 </html>
