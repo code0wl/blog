@@ -1,15 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>List of blog posts</h2>
-<ul>
-    {% if items %}
-    {% for item in items %}
-    <li>{{item}}</li>
-    {% endfor %}
-    {% endif %}
-</ul>
 
-<a href="/blog/newpost"> Add post </a>
+  {% for p in posts %}
+    {{ p.render() | safe }}
+    <br><br>
+  {% endfor %}
+
+<a href="/blog/newpost"> Create a new post </a>
 
 {% endblock %}
