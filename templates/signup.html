@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Authenticate</h2>
+
+<form method="post">
+    <label>
+        <div>username</div>
+        <input type="text" name="username" value="{{username}}">
+    </label>
+
+    <label>
+        <div>password</div>
+        <input type="password" name="password" value="{{password}}">
+    </label>
+
+    <label>
+        <div>Verify password</div>
+        <input type="password" name="verify_password" value="{{password}}">
+    </label>
+
+    <label>
+        <div>e-mail (optional)</div>
+        <input type="password" name="email" value="{{password}}">
+    </label>
+
+    <div class="error">{{error}}</div>
+
+    <button type="submit">sign up </button>
+</form>
+
+<h4>Already have an account?</h4>
+<a href="/blog/authenticate">Login now!</a>
+{% endblock %}
