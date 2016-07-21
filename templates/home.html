@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h4>Food list</h4>
+<h2>List of blog posts</h2>
 <ul>
     {% if items %}
     {% for item in items %}
@@ -9,4 +9,7 @@
     {% endfor %}
     {% endif %}
 </ul>
+
+<a href="/blog/newpost"> Add post </a>
+
 {% endblock %}
