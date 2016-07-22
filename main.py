@@ -118,6 +118,47 @@ def blog_key(name='default'):
     return db.Key.from_path('blogs', name)
 
 
+class Comment(db.Model):
+    comment = db.StringProperty(required=True)
+    post = db.StringProperty(required=True)
+
+    @classmethod
+    def render(self):
+        self.render("comment.html")
+
+
+class NewComment(BlogHandler):
+    def get(self, post_id):
+        if not self.user:
+            self.redirect("/login")
+            return
+
+        post = Post.get_by_id(int(post_id), parent=blog_key())
+        subject = post.subject
+        content = post.content
+        self.render("newcomment.html", subject=subject, content=content, pkey=post.key())
+
+    def post(self, post_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+        if not post:
+            self.error(404)
+            return
+
+        if not self.user:
+            self.redirect('login')
+
+        comment = self.request.get('comment')
+
+        if comment:
+            c = Comment(comment=comment, post=post_id, parent=self.user.key())
+            c.put()
+            self.redirect('/blog/%s' % str(post_id))
+        else:
+            error = "please provide a comment!"
+            self.render("permalink.html", post=post, content=content, error=error)
+
+
 class Post(db.Model):
     subject = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
@@ -130,6 +171,42 @@ class Post(db.Model):
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
         return render_str("post.html", p=self)
+
+    @property
+    def comments(self):
+        return Comment.all().filter("post = ", str(self.key().id()))
+
+
+class UpdateComment(BlogHandler):
+    def get(self, post_id, comment_id):
+        post = Post.get_by_id(int(post_id), parent=blog_key())
+        comment = Comment.get_by_id(int(comment_id), parent=self.user.key())
+        if comment:
+            self.render("updatecomment.html", subject=post.subject, content=post.content, comment=comment.comment)
+        else:
+            self.redirect('/commenterror')
+
+    def post(self, post_id, comment_id):
+        comment = Comment.get_by_id(int(comment_id), parent=self.user.key())
+        if comment.parent().key().id() == self.user.key().id():
+            comment.comment = self.request.get('comment')
+            comment.put()
+        self.redirect('/blog/%s' % str(post_id))
+
+
+class DeleteComment(BlogHandler):
+    def get(self, post_id, comment_id):
+        comment = Comment.get_by_id(int(comment_id), parent=self.user.key())
+        if comment:
+            comment.delete()
+            self.redirect('/blog/%s' % str(post_id))
+        else:
+            self.redirect('/commenterror')
+
+
+class CommentError(BlogHandler):
+    def get(self):
+        self.write('Something went wrong.')
 
 
 class BlogFront(BlogHandler):
@@ -211,16 +288,12 @@ class EditPost(BlogHandler):
         if not self.user:
             self.redirect("/login")
         else:
-            subject = self.request.get('subject')
-            content = self.request.get('content')
             key = db.Key.from_path('Post', int(post_id), parent=blog_key())
             p = db.get(key)
             p.subject = self.request.get('subject')
             p.content = self.request.get('content')
             p.put()
             self.redirect('/blog/%s' % str(p.key().id()))
-            pid = p.key().id()
-            print "pid = ", str(pid)
 
 
 class NewPost(BlogHandler):
@@ -358,6 +431,10 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/([0-9]+)/like', LikePost),
                                ('/login', Login),
                                ('/error', Error),
-                               ('/logout', Logout)
+                               ('/logout', Logout),
+                               ('/blog/([0-9]+)/newcomment', NewComment),
+                               ('/blog/([0-9]+)/updatecomment/([0-9]+)', UpdateComment),
+                               ('/blog/([0-9]+)/deletecomment/([0-9]+)', DeleteComment),
+                               ('/commenterror', CommentError)
                                ],
                               debug=True)

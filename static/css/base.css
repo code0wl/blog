@@ -75,6 +75,10 @@ input {
     color: #999
 }
 
+.main-nav a {
+    color: #fff;
+}
+
 .post .post-content {
     padding: 1rem 0;
     font-weight: 200;

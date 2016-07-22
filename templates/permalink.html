@@ -14,6 +14,9 @@
         </li>
         {% else %}
         <li>
+            <a href="/blog">&#9664; Go back</a>
+        </li>
+        <li>
             <a href="/blog/{{post.key().id()}}/like">&#9829; Like</a>
         </li>
         {% endif %}
@@ -22,4 +25,34 @@
 {% endif %}
 
 {{post.render() | safe}}
-{% endblock %}
+
+{% if user %}
+<div>
+    <span>{{post.comments.count()}} comments</span>
+    <a href="/blog/{{post.key().id()}}/newcomment">Comment</a>
+</div>
+
+{% if post.comments %}
+
+<div class="post-comments">
+    <h2>Comments</h2>
+
+    {% for c in post.comments %}
+
+    <div class="comment">
+        <div class="comment-author">{{ c.parent().name }} says:</div>
+        <p class="comment-content">{{ c.comment }}</p>
+        <a href="/blog/{{post.key().id()}}/updatecomment/{{c.key().id()}}">update</a>
+        <span class="separator"> | </span>
+        <a href="/blog/{{post.key().id()}}/deletecomment/{{c.key().id()}}">delete</a>
+    </div>
+
+    {% endfor %}
+
+    <a href="/blog/{{post.key().id()}}/newcomment">add new comment</a>
+
+    {% endif %}
+
+    {% endif %}
+
+    {% endblock %}
