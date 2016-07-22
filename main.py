@@ -137,19 +137,6 @@ class BlogFront(BlogHandler):
         self.render('front.html', posts=posts)
 
 
-class DeletePost(BlogHandler):
-    def get(self, post_id):
-        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
-        post = db.get(key)
-
-        if not post:
-            self.error(404)
-            return
-
-        post.key.delete()
-        self.render("/blog/")
-
-
 class PostPage(BlogHandler):
     def get(self, post_id):
         key = db.Key.from_path('Post', int(post_id), parent=blog_key())
@@ -160,6 +147,25 @@ class PostPage(BlogHandler):
             return
 
         self.render("permalink.html", post=post)
+
+
+class RemovePost(BlogHandler):
+    def get(self, post_id):
+        if not self.user:
+            self.redirect('/login')
+        else:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            author = post.author
+            loggedUser = self.user.name
+
+            if author == loggedUser:
+                key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+                post = db.get(key)
+                post.delete()
+                self.render("removepost.html")
+            else:
+                self.redirect("/editDeleteError")
 
 
 class NewPost(BlogHandler):
@@ -304,9 +310,9 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
+                               ('/blog/([0-9]+)/removepost', RemovePost),
                                ('/signup', Register),
                                ('/login', Login),
-                               ('/blog/([0-9]+/remove)', DeletePost),
                                ('/logout', Logout)
                                ],
                               debug=True)
