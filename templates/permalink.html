@@ -1,13 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user and user.name == post.author %}
+
 <aside>
     <ul class="controls">
-        <li>&#9998; Edit</li>
-        <li>&#10006; Delete</li>
+        {% if user and user.name == post.author %}
+        <li>
+            <form method="get" id="edit">
+                <label>
+                    <input name="edit" class="like-check" checked="" type="checkbox"/>
+                    <span class="like-button">&#9998; Edit</span>
+                </label>
+            </form>
+        </li>
+        <li>
+            <a href="/blog/{{post.key().id()}}/remove" class="like-button">&#10006; Delete</a>
+        </li>
+        {% else %}
+        <li>
+            <form method="get" id="like">
+                <label>
+                    <input name="like" class="like-check" checked="" type="checkbox"/>
+                    <span class="like-button">&#9829; Like</span>
+                </label>
+            </form>
+        </li>
+        {% endif %}
     </ul>
 </aside>
-{% endif %}
+
+
 {{post.render() | safe}}
 {% endblock %}

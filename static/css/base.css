@@ -99,9 +99,23 @@ ul {
     background: #1a90bc;
 }
 
+.like-check {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.like-button {
+    cursor: pointer;
+}
+
+.like-check:checked ~ .like-button {
+    color: red;
+}
+
 .nav-menu {
     right: 1rem;
-    top: 1rem;
+    top: 2rem;
     position: absolute;
 }
 

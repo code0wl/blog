@@ -124,6 +124,7 @@ class Post(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     author = db.StringProperty(required=True)
+    likes = db.StringProperty(required=True)
 
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
@@ -134,6 +135,19 @@ class BlogFront(BlogHandler):
     def get(self):
         posts = Post.all().order('-created').fetch(10)
         self.render('front.html', posts=posts)
+
+
+class DeletePost(BlogHandler):
+    def get(self, post_id):
+        key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+        post = db.get(key)
+
+        if not post:
+            self.error(404)
+            return
+
+        post.key.delete()
+        self.render("/blog/")
 
 
 class PostPage(BlogHandler):
@@ -162,14 +176,32 @@ class NewPost(BlogHandler):
         subject = self.request.get('subject')
         content = self.request.get('content')
         author = self.request.get('author')
+        likes = self.request.get('likes')
 
         if subject and content:
-            p = Post(parent=blog_key(), subject=subject, content=content, author=author)
+            p = Post(parent=blog_key(), subject=subject, content=content, author=author, likes=likes)
             p.put()
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
             error = "Please add a valid subject or content!"
             self.render("newpost.html", subject=subject, content=content, error=error)
+
+
+class Likes(BlogHandler):
+    def get(self):
+        if self.user:
+            self.render("permalink.html")
+        else:
+            self.redirect("/login")
+
+    def post(self):
+        if not self.user:
+            self.redirect('/blog')
+
+        likes = self.request.get('likes')
+        p = Post(parent=blog_key(), likes=likes)
+        p.put()
+        self.redirect('/blog/%s' % str(p.key().id()))
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -268,20 +300,13 @@ class Logout(BlogHandler):
         self.redirect('/blog')
 
 
-class Unit3Welcome(BlogHandler):
-    def get(self):
-        if self.user:
-            self.render('welcome.html', username=self.user.name)
-        else:
-            self.redirect('/signup')
-
-
 app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/?', BlogFront),
                                ('/blog/([0-9]+)', PostPage),
                                ('/blog/newpost', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
+                               ('/blog/([0-9]+/remove)', DeletePost),
                                ('/logout', Logout)
                                ],
                               debug=True)
