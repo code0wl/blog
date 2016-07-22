@@ -18,12 +18,7 @@
         </li>
         {% else %}
         <li>
-            <form method="get" id="like">
-                <label>
-                    <input name="like" class="like-check" checked="" type="checkbox"/>
-                    <span class="like-button">&#9829; Like</span>
-                </label>
-            </form>
+            <a href="/blog/{{post.key().id()}}/like">&#9829; Like</a>
         </li>
         {% endif %}
     </ul>

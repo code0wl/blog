@@ -124,7 +124,8 @@ class Post(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
     last_modified = db.DateTimeProperty(auto_now=True)
     author = db.StringProperty(required=True)
-    likes = db.StringProperty(required=True)
+    likes = db.IntegerProperty(required=True)
+    liked_by = db.ListProperty(str)
 
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
@@ -165,7 +166,26 @@ class RemovePost(BlogHandler):
                 post.delete()
                 self.render("removepost.html")
             else:
-                self.redirect("/editDeleteError")
+                self.redirect("/")
+
+
+class LikePost(BlogHandler):
+    def get(self, post_id):
+        if not self.user:
+            self.redirect('/login')
+        else:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            author = post.author
+            logged_user = self.user.name
+
+            if author == logged_user or logged_user in post.liked_by:
+                self.redirect('/error')
+            else:
+                post.likes += 1
+                post.liked_by.append(logged_user)
+                post.put()
+                self.redirect("/blog")
 
 
 class NewPost(BlogHandler):
@@ -182,32 +202,14 @@ class NewPost(BlogHandler):
         subject = self.request.get('subject')
         content = self.request.get('content')
         author = self.request.get('author')
-        likes = self.request.get('likes')
 
         if subject and content:
-            p = Post(parent=blog_key(), subject=subject, content=content, author=author, likes=likes)
+            p = Post(parent=blog_key(), subject=subject, content=content, author=author, likes=0, liked_by=[])
             p.put()
             self.redirect('/blog/%s' % str(p.key().id()))
         else:
             error = "Please add a valid subject or content!"
             self.render("newpost.html", subject=subject, content=content, error=error)
-
-
-class Likes(BlogHandler):
-    def get(self):
-        if self.user:
-            self.render("permalink.html")
-        else:
-            self.redirect("/login")
-
-    def post(self):
-        if not self.user:
-            self.redirect('/blog')
-
-        likes = self.request.get('likes')
-        p = Post(parent=blog_key(), likes=likes)
-        p.put()
-        self.redirect('/blog/%s' % str(p.key().id()))
 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -300,6 +302,11 @@ class Login(BlogHandler):
             self.render('login-form.html', error=msg)
 
 
+class Error(BlogHandler):
+    def get(self):
+        self.render('error.html')
+
+
 class Logout(BlogHandler):
     def get(self):
         self.logout()
@@ -312,7 +319,9 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/newpost', NewPost),
                                ('/blog/([0-9]+)/removepost', RemovePost),
                                ('/signup', Register),
+                               ('/blog/([0-9]+)/like', LikePost),
                                ('/login', Login),
+                               ('/error', Error),
                                ('/logout', Logout)
                                ],
                               debug=True)
