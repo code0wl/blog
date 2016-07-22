@@ -10,27 +10,25 @@
 <nav class="main-nav">
     <div class="title">
         <a href="/blog" class="main-title">
+            {% if user %}
+                Welcome, {{user.name}}!
+            {% endif %}
             Just another blog
         </a>
     </div>
-    <div class="login">
-        {% if user %}
-        <a class="login-link" href="/blog/newpost">Add Post</a>
-
-        <ul class="nav-menu">
-            <li>&#9660;
-                <ul class="sub-menu">
-                    <li>{{user.name}}</li>
-                    <li><a href="/logout">Logout</a></li>
-                </ul>
-            </li>
-
-        </ul>
-        {% else %}
-        <a class="login-link" href="/login">login</a> / <a class="login-link" href="/signup">Signup</a>
-        {% endif %}
-    </div>
 </nav>
+<ul class="nav-menu">
+    <li>
+        <a href="/blog" class="main-title">Home</a>
+        {% if user %}
+        <a href="/blog/newpost">Add Post</a>
+        <a href="/logout">Logout</a>
+        {% else %}
+        <a href="/login">Login</a>
+        <a class="login-link" href="/signup">Signup</a>
+        {% endif %}
+    </li>
+</ul>
 
 <div id="content">
     {% block content %}

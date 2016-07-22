@@ -2,16 +2,12 @@
 
 {% block content %}
 
+{% if user %}
 <aside>
     <ul class="controls">
-        {% if user and user.name == post.author %}
+        {% if user.name == post.author %}
         <li>
-            <form method="get" id="edit">
-                <label>
-                    <input name="edit" class="like-check" checked="" type="checkbox"/>
-                    <span class="like-button">&#9998; Edit</span>
-                </label>
-            </form>
+            <a href="/blog/{{post.key().id()}}/edit">&#9998; Edit</a>
         </li>
         <li>
             <a href="/blog/{{post.key().id()}}/removepost" class="like-button">&#10006; Delete</a>
@@ -23,7 +19,7 @@
         {% endif %}
     </ul>
 </aside>
-
+{% endif %}
 
 {{post.render() | safe}}
 {% endblock %}

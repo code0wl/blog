@@ -188,6 +188,41 @@ class LikePost(BlogHandler):
                 self.redirect("/blog")
 
 
+class EditPost(BlogHandler):
+    def get(self, post_id):
+        if not self.user:
+            self.redirect('/login')
+        else:
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            post = db.get(key)
+            author = post.author
+            loggedUser = self.user.name
+
+            if author == loggedUser:
+                key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+                post = db.get(key)
+                error = ""
+                self.render("edit.html", subject=post.subject,
+                            content=post.content, error=error)
+            else:
+                self.redirect("/error")
+
+    def post(self, post_id):
+        if not self.user:
+            self.redirect("/login")
+        else:
+            subject = self.request.get('subject')
+            content = self.request.get('content')
+            key = db.Key.from_path('Post', int(post_id), parent=blog_key())
+            p = db.get(key)
+            p.subject = self.request.get('subject')
+            p.content = self.request.get('content')
+            p.put()
+            self.redirect('/blog/%s' % str(p.key().id()))
+            pid = p.key().id()
+            print "pid = ", str(pid)
+
+
 class NewPost(BlogHandler):
     def get(self):
         if self.user:
@@ -319,6 +354,7 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/newpost', NewPost),
                                ('/blog/([0-9]+)/removepost', RemovePost),
                                ('/signup', Register),
+                               ('/blog/([0-9]+)/edit', EditPost),
                                ('/blog/([0-9]+)/like', LikePost),
                                ('/login', Login),
                                ('/error', Error),
