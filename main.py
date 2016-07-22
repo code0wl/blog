@@ -121,6 +121,7 @@ def blog_key(name='default'):
 class Comment(db.Model):
     comment = db.StringProperty(required=True)
     post = db.StringProperty(required=True)
+    author = db.StringProperty(required=True)
 
     @classmethod
     def render(self):
@@ -151,7 +152,8 @@ class NewComment(BlogHandler):
         comment = self.request.get('comment')
 
         if comment:
-            c = Comment(comment=comment, post=post_id, parent=self.user.key())
+            author = self.request.get('author')
+            c = Comment(comment=comment, post=post_id, parent=self.user.key(), author=author)
             c.put()
             self.redirect('/blog/%s' % str(post_id))
         else:
@@ -435,6 +437,6 @@ app = webapp2.WSGIApplication([('/?', BlogFront),
                                ('/blog/([0-9]+)/newcomment', NewComment),
                                ('/blog/([0-9]+)/updatecomment/([0-9]+)', UpdateComment),
                                ('/blog/([0-9]+)/deletecomment/([0-9]+)', DeleteComment),
-                               ('/commenterror', CommentError)
+                               ('/commenterror', CommentError),
                                ],
                               debug=True)
