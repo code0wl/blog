@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user %}
-<ul class="controls">
-    <li>
-        edit post
-    </li>
-
-    <li>
-        remove post
-    </li>
-</ul>
+{% if user and user.name == post.author %}
+<aside>
+    <ul class="controls">
+        <li>&#9998; Edit</li>
+        <li>&#10006; Delete</li>
+    </ul>
+</aside>
 {% endif %}
 {{post.render() | safe}}
 {% endblock %}

@@ -7,52 +7,42 @@ body {
 }
 
 .main-nav {
-    overflow: auto;
     background: #1a90bc;
-    padding: 1rem;
-}
-
-table {
-    width: 100%;
+    padding: 2rem 1rem 3rem 1rem;
 }
 
 .login a {
-    margin: 0 1rem;
-}
-
-td {
-    width: 100%;
-}
-
-tr,
-label {
-    width: 100%;
+    margin: 0 2rem;
 }
 
 input {
     width: 100%;
 }
 
+.controls {
+    margin: -1rem;
+    padding: 1rem;
+    width: 100%;
+    color: white;
+    background: #197fa5;
+    text-align: right;
+}
+
+.controls li {
+    display: inline-block;
+    margin: 0 1rem;
+}
+
 .main-nav > div {
-    text-align: left;
     float: left;
     width: 50%;
+    text-align: right;
     box-sizing: border-box;
     padding: 0;
-    color:  white;
+    color: white;
     margin: 0;
 }
 
-@media screen and (min-width: 768px) {
-    .main-nav > div {
-        text-align: right;
-        box-sizing: border-box;
-    }
-}
-a{
-    display: block;
-    background: blue
-}
 .post {
     padding: 1rem;
     margin: 3rem 0;
@@ -79,7 +69,7 @@ a{
 
 .post .post-content {
     padding: 1rem 0;
-    font-weight:200;
+    font-weight: 200;
 }
 
 .main-nav a {
@@ -93,4 +83,34 @@ a{
 
 #content {
     padding: 1rem;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.sub-menu {
+    display: none;
+    position: absolute;
+    top: 1.2rem;
+    right: 0;
+    background: #1a90bc;
+}
+
+.nav-menu {
+    right: 1rem;
+    top: 1rem;
+    position: absolute;
+}
+
+.sub-menu li {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #1a759f;
+}
+
+.nav-menu:hover .sub-menu {
+    display: block;
 }
